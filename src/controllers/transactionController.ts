@@ -14,9 +14,9 @@ export const getTransaction = async (req: Request, res: Response) => {
 };
 
 export const addTransaction = async (req: Request, res: Response) => {
-  const { id, id_product, id_user } = req.body;
+  const {  id_product, id_user } = req.body;
   try {
-    const transaction = await transactionRepository.addTransaction(id, id_product, id_user);
+    const transaction = await transactionRepository.addTransaction( id_product, id_user);
     res.status(201).json(transaction);
   } catch (err) {
     console.error(err);

@@ -17,9 +17,9 @@ export class TransactionRepository {
   }
 
   // Método para adicionar novas Transações
-  async addTransaction(id: number, id_product: number, id_user: number): Promise<Transaction> {
-    const queryText = 'INSERT INTO transactions(id, id_product, id_user) VALUES($1, $2, $3) RETURNING *';
-    const { rows } = await this.pool.query(queryText, [id, id_product, id_user]);
+  async addTransaction(id_product: number, id_user: number): Promise<Transaction> {
+    const queryText = 'INSERT INTO transactions( id_user,id_product ) VALUES( $1,$2) RETURNING *';
+    const { rows } = await this.pool.query(queryText, [id_user,id_product, ]);
     return rows[0];
   }
 }
