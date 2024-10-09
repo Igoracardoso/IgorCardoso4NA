@@ -1,22 +1,35 @@
-import pool from '../config/database';
+import db from '../config/database';
 
-const createUsersTable = async () => {
-  const client = await pool.connect();
-  try {
-    const queryText = `
-      CREATE TABLE IF NOT EXISTS users (
-        id SERIAL PRIMARY KEY,
-        name VARCHAR(100) NOT NULL,
-        email VARCHAR(100) UNIQUE NOT NULL
-      );
-    `;
-    await client.query(queryText);
-    console.log('Tabela "users" criada com sucesso!');
-  } catch (err) {
-    console.error('Erro ao criar tabela:', err);
-  } finally {
-    client.release();
-  }
+// Função para inicializar o banco de dados
+const initializeDatabase = () => {
+    // Criar uma tabela se não existir
+    db.run(`CREATE TABLE IF NOT EXISTS usuarios (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        nome TEXT NOT NULL,
+        email TEXT NOT NULL UNIQUE,
+    );`, (err) => {
+        if (err) {
+            console.error('Erro ao criar tabela:', err.message);
+        } else {
+            console.log('Tabela "usuarios" criada ou já existe.');
+        }
+    });
+
+    // Inserir dados iniciais
+    const insertUser = (nome: string) => {
+        db.run(`INSERT INTO usuarios (nome) VALUES (?)`, [nome], function(err) {
+            if (err) {
+                console.error('Erro ao inserir usuário:', err.message);
+            } else {
+                console.log(`Usuário ${nome} inserido com sucesso. ID: ${this.lastID}`);
+            }
+        });
+    };
+
+    // Inserindo alguns usuários
+    insertUser('João');
+    insertUser('Maria');
 };
 
-createUsersTable().then(() => process.exit(0));
+// Inicializar o banco de dados e inserir dados
+initializeDatabase();
